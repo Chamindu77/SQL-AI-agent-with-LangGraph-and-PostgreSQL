@@ -1,0 +1,4 @@
+{
+    "venvPath": "${workspaceFolder}",
+    "venv": "venv"
+}
