@@ -19,7 +19,6 @@
 - [Postman Usage](#postman-usage)
 - [Free Models (OpenRouter)](#free-models-openrouter)
 - [Example Queries](#example-queries)
-- [Troubleshooting](#troubleshooting)
 - [Tech Stack](#tech-stack)
 
 ---
@@ -42,25 +41,8 @@ The agent automatically:
 ## Architecture
 
 ```
-User Question
-     │
-     ▼
-┌─────────────────────────────────────────┐
-│           LangGraph Agent Graph         │
-│                                         │
-│  1. Extract Schema (PostgreSQL)         │
-│         │                               │
-│  2. Generate SQL V1 (LLM)              │
-│         │                               │
-│  3. Execute SQL (PostgreSQL)            │
-│         │                               │
-│  4. Reflect & Refine V2 (LLM) ◄──loop  │
-│         │                               │
-│  5. Format Final Answer                 │
-└─────────────────────────────────────────┘
-     │
-     ▼
-Final Answer (Markdown table)
+<img width="728" height="638" alt="Screenshot 2026-03-18 091906" src="https://github.com/user-attachments/assets/10689b22-fbc8-4c40-8a53-bd21ab07f412" />
+
 ```
 
 ---
@@ -95,30 +77,30 @@ The `MAX_REFLECTION_RETRIES` setting controls how many correction loops run (def
 ```
 sql_ai_agent/
 │
-├── .env                        # API keys & DB credentials
-├── requirements.txt            # All Python dependencies
-├── README.md                   # This file
+├── .env                        
+├── requirements.txt            
+├── README.md                   
 │
 ├── app/
 │   ├── __init__.py
-│   ├── main.py                 # FastAPI REST API entrypoint
-│   ├── config.py               # Settings (model, DB URL, retries)
+│   ├── main.py                 
+│   ├── config.py               
 │   │
 │   ├── agent/
 │   │   ├── __init__.py
-│   │   ├── graph.py            # LangGraph graph definition (core)
-│   │   ├── state.py            # AgentState TypedDict
-│   │   ├── nodes.py            # All graph node functions
-│   │   └── edges.py            # Conditional edge logic (retry / done)
+│   │   ├── graph.py            
+│   │   ├── state.py            
+│   │   ├── nodes.py            
+│   │   └── edges.py            
 │   │
 │   ├── tools/
 │   │   ├── __init__.py
-│   │   ├── db.py               # PostgreSQL connection & query runner
-│   │   └── schema.py           # Live schema extractor
+│   │   ├── db.py               
+│   │   └── schema.py          
 │   │
 │   └── prompts/
-│       ├── generate_sql.py     # System prompt for SQL generation
-│       └── reflect_sql.py      # System prompt for reflection
+│       ├── generate_sql.py     
+│       └── reflect_sql.py      
 │
 ├── tests/
 │   ├── test_nodes.py
@@ -126,8 +108,8 @@ sql_ai_agent/
 │   └── test_graph.py
 │
 └── scripts/
-    ├── seed_db.py              # Create & seed PostgreSQL with sample data
-    └── run_agent.py            # CLI to ask questions directly
+    ├── seed_db.py              
+    └── run_agent.py            
 ```
 
 ---
@@ -148,7 +130,7 @@ Before you begin, ensure you have:
 ### 1. Clone the repository
 
 ```bash
-git clone https://github.com/your-username/sql-ai-agent.git
+git clone https://github.com/Chamindu77/SQL-AI-agent-with-LangGraph-and-PostgreSQL.git
 cd sql-ai-agent
 ```
 
@@ -194,14 +176,14 @@ pydantic-settings>=2.0.0
 ### 1. Create your `.env` file
 
 ```env
-# ── OpenRouter (free LLM API) ──────────────────────────
+# OpenRouter (free LLM API)
 OPENROUTER_API_KEY=sk-or-your-key-here
 LLM_MODEL=meta-llama/llama-3.3-70b-instruct:free
 
-# ── PostgreSQL ─────────────────────────────────────────
+# PostgreSQL 
 DATABASE_URL=postgresql://postgres:yourpassword@localhost:5432/sql_agent_db
 
-# ── Agent settings ─────────────────────────────────────
+#  Agent settings 
 MAX_REFLECTION_RETRIES=2
 ```
 
@@ -345,7 +327,6 @@ Health check endpoint.
 }
 ```
 
-> ⚠️ **Common mistake:** Make sure the body is wrapped in `{ }` curly braces and the dropdown next to "raw" is set to **JSON**, not Text.
 
 ### Steps in Postman
 
@@ -397,68 +378,6 @@ python scripts/run_agent.py "Which product was restocked most recently?"
 python scripts/run_agent.py "Which product has the highest unit price?"
 python scripts/run_agent.py "Show the average price per category"
 ```
-
----
-
-## Troubleshooting
-
-### ❌ `password authentication failed for user`
-
-Your `DATABASE_URL` in `.env` has wrong credentials.
-
-```env
-# Fix: use your actual PostgreSQL password
-DATABASE_URL=postgresql://postgres:YOUR_REAL_PASSWORD@localhost:5432/sql_agent_db
-```
-
-Test connection:
-```bash
-psql -U postgres -h localhost
-```
-
----
-
-### ❌ `429 Rate limit error` from OpenRouter
-
-The free model is temporarily rate-limited. Switch models in `.env`:
-
-```env
-LLM_MODEL=meta-llama/llama-3.3-70b-instruct:free
-```
-
----
-
-### ❌ `500 Internal Server Error` from Postman
-
-Check that:
-1. Your body is valid JSON with curly braces: `{ "question": "..." }`
-2. Body type is set to **raw** → **JSON** in Postman
-3. The FastAPI server is running (`uvicorn app.main:app --reload`)
-
----
-
-### ❌ `No results found` for time-based queries
-
-Your data timestamps may not match the queried time range. Re-seed with varied timestamps:
-
-```bash
-python scripts/seed_db.py
-```
-
----
-
-### ❌ `ModuleNotFoundError`
-
-Make sure your virtual environment is activated:
-
-```bash
-# Windows
-venv\Scripts\activate
-
-# macOS / Linux
-source venv/bin/activate
-```
-
 ---
 
 ## Tech Stack
@@ -482,4 +401,4 @@ MIT License — feel free to use, modify, and distribute.
 
 ---
 
-> Built with the **Reflection design pattern** for reliable, self-correcting AI agents. 🚀
+> Built with the **Reflection design pattern** for reliable, self-correcting AI agents.
