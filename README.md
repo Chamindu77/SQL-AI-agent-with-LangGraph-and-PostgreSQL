@@ -40,10 +40,7 @@ The agent automatically:
 
 ## Architecture
 
-```
-<img width="728" height="638" alt="Screenshot 2026-03-18 091906" src="https://github.com/user-attachments/assets/10689b22-fbc8-4c40-8a53-bd21ab07f412" />
-
-```
+<img width="728" height="638" alt="Screenshot 2026-03-18 091906" src="https://github.com/user-attachments/assets/b39d7b81-03e5-4596-be2b-61f746830d78" />
 
 ---
 
